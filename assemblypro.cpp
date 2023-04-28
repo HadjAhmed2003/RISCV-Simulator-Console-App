@@ -1,6 +1,8 @@
 #include<bits/stdc++.h>
 using namespace std;
-unordered_map<string, int> memory_locations; 
+unordered_map<string, string> memory_locations; //variable name ---> address
+unordered_map<string, string> data_values; //address ---> value
+vector<string> program;
 const bitset<32> zero(0); 
 bitset<32> ra(0); 
 bitset<32> sp; 
@@ -34,6 +36,45 @@ bitset<32> t4(0);
 bitset<32> t5(0); 
 bitset<32> t6(0); 
 int PC; 
+void ReadData(){
+    string path; 
+    cout << "Enter Data file path: ";
+    cin >> path;
+    fstream fin;
+    string line;
+    fin.open(path, ios::in);
+    while(std::getline(fin, line))
+    {
+        std::stringstream ss(line);
+        string temp;
+        vector<string> inputs; 
+        while(std::getline(ss, temp, ',')){
+            inputs.push_back(temp);
+        }
+        memory_locations[inputs[0]] = inputs[1]; 
+        int inc = 0; 
+        int address = stoi(inputs[1]); 
+        for(int i=2; i<inputs.size(); i++){
+            int adr = address+inc; 
+            data_values[to_string(adr)] = inputs[i];
+            inc+=4; 
+        } 
+    } 
+    fin.close();
+}
+void uploadProgram(){
+    string path; 
+    cout << "Enter your program file: "; 
+    cin >> path;
+    fstream fin;
+    string line;
+    fin.open(path, ios::in);
+    while(std::getline(fin, line))
+    {
+        program.push_back(line); 
+    }
+    fin.close();
+}
 void LUI(bitset<32>& rd, int imm){
     bitset<32> temp(imm); 
     for(int i=31; i>=12; i--){
