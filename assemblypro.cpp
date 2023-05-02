@@ -178,6 +178,25 @@ void SLTIU(bitset<32>* rd, const bitset<32>* rs1, int imm){
     (*rd) = (first<t); 
 }
 
+void SLLI(bitset<32>* rd, const bitset<32>* rs1, int imm){
+    bitset<5> temp(imm); 
+    int shift_amount = temp.to_ulong(); 
+    (*rd) = (*rs1) << shift_amount; 
+}
+
+void SRLI(bitset<32>* rd, const bitset<32>* rs1, int imm){
+    bitset<5> temp(imm); 
+    int shift_amount = temp.to_ulong(); 
+    (*rd) = (*rs1) >> shift_amount; 
+}
+
+void SRAI(bitset<32>* rd, const bitset<32>* rs1, int imm){
+    bitset<5> temp(imm); 
+    int shift_amount = temp.to_ulong(); 
+    signed int rs = (int)(*rs1).to_ulong();
+    (*rd) = (rs) >> shift_amount;
+}
+
 bitset<32>* getRegister(string operand){
     if(operand == "zero" || operand == "x0"){
         return &zero; 
@@ -333,6 +352,33 @@ void uploadProgram(){
 
 void executeInstruction(vector<string> inputs){
     string instruction = inputs[0];
+    if(instruction=="srai" || instruction == "SRAI"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        int imm = stoi(inputs[3]);
+        SRAI(rd, rs1, imm);
+        return; 
+    }
+    if(instruction=="srli" || instruction == "SRLI"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        int imm = stoi(inputs[3]);
+        SRLI(rd, rs1, imm);
+        return; 
+    }
+    if(instruction=="slli" || instruction == "SLLI"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        int imm = stoi(inputs[3]);
+        SLLI(rd, rs1, imm);
+        return; 
+    }
     if(instruction=="sltiu" || instruction == "SLTIU"){
         inputs[1].pop_back();
         bitset<32>* rd = getRegister(inputs[1]);
