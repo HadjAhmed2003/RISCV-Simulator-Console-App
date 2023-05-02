@@ -120,6 +120,64 @@ void ADDI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     }
 }
 
+void SRL(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
+    bitset<5> temp; 
+    for(int i=0; i<5; i++){
+        temp[i]= (*rs2)[i];
+    }
+    int shift_amount = temp.to_ulong(); 
+    (*rd) = (*rs1) >> shift_amount; 
+}
+
+void SRA(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
+    bitset<5> temp; 
+    for(int i=0; i<5; i++){
+        temp[i]= (*rs2)[i];
+    }
+    int shift_amount = temp.to_ulong(); 
+    signed int rs = (int)(*rs1).to_ulong();
+    (*rd) = (rs) >> shift_amount;
+}
+
+void SLL(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
+    bitset<5> temp; 
+    for(int i=0; i<5; i++){
+        temp[i]= (*rs2)[i];
+    }
+    int shift_amount = temp.to_ulong(); 
+    (*rd) = (*rs1) << shift_amount; 
+}
+
+void SLT(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
+    int first = (int)(*rs1).to_ulong();
+    int second = (int)(*rs2).to_ulong();
+    (*rd) = (first<second); 
+}
+
+void SLTU(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
+    unsigned int first = (*rs1).to_ulong();
+    unsigned int second = (*rs2).to_ulong();
+    (*rd) = (first<second); 
+}
+
+void SLTI(bitset<32>* rd, const bitset<32>* rs1, int imm){
+    int first = (int)(*rs1).to_ulong();
+    bitset<12> temp(imm); 
+    int t = (int)temp.to_ulong();
+    if(t==2048){
+        t = -2048;
+    }
+    cout << t << endl;
+    (*rd) = (first<t); 
+}
+
+void SLTIU(bitset<32>* rd, const bitset<32>* rs1, int imm){
+    int first = (int)(*rs1).to_ulong();
+    bitset<12> temp(imm); 
+    unsigned int t = temp.to_ulong();
+    (*rd) = (first<t); 
+}
+
 bitset<32>* getRegister(string operand){
     if(operand == "zero" || operand == "x0"){
         return &zero; 
@@ -274,7 +332,70 @@ void uploadProgram(){
 }
 
 void executeInstruction(vector<string> inputs){
-    string instruction = inputs[0]; 
+    string instruction = inputs[0];
+    if(instruction=="sltiu" || instruction == "SLTIU"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        int imm = stoi(inputs[3]);
+        SLTIU(rd, rs1, imm);
+        return; 
+    }
+    if(instruction=="slti" || instruction == "SLTI"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        int imm = stoi(inputs[3]);
+        SLTI(rd, rs1, imm);
+        return; 
+    }
+    if(instruction=="sltu" || instruction == "SLTU"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        bitset<32>* rs2 = getRegister(inputs[3]);
+        SLTU(rd, rs1, rs2);
+        return; 
+    }
+    if(instruction=="slt" || instruction == "SLT"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        bitset<32>* rs2 = getRegister(inputs[3]);
+        SLT(rd, rs1, rs2);
+        return; 
+    }
+    if(instruction=="sll" || instruction == "SLL"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        bitset<32>* rs2 = getRegister(inputs[3]);
+        SLL(rd, rs1, rs2);
+        return; 
+    }
+    if(instruction=="sra" || instruction == "SRA"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        bitset<32>* rs2 = getRegister(inputs[3]);
+        SRA(rd, rs1, rs2);
+        return; 
+    }
+    if(instruction=="srl" || instruction == "SRL"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        bitset<32>* rs2 = getRegister(inputs[3]);
+        SRL(rd, rs1, rs2);
+        return; 
+    }
     if(instruction=="lui" || instruction == "LUI"){
         inputs[1].pop_back();
         bitset<32>* rd = getRegister(inputs[1]);
