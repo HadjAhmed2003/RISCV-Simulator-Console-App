@@ -36,6 +36,7 @@ bitset<32> t4(0);
 bitset<32> t5(0); 
 bitset<32> t6(0); 
 int PC; 
+int i=0;
 
 void LUI(bitset<32>*rd, int imm){
     bitset<32> temp(imm); 
@@ -44,6 +45,9 @@ void LUI(bitset<32>*rd, int imm){
     }
     for(int i=11; i>=0; i--){
         (*rd)[i]=0; 
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
     }
 }
 
@@ -56,24 +60,39 @@ void AUIPC(bitset<32>* rd, int PC, int imm){
     for(int i=11; i>=0; i--){
         (*rd)[i]=0; 
     }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void AND(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     (*rd) = (*rs1) & (*rs2); 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void OR(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     (*rd) = (*rs1) | (*rs2); 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void XOR(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
-    (*rd) = (*rs1) ^ (*rs2); 
+    (*rd) = (*rs1) ^ (*rs2);
+    if(rd == &zero){
+        (*rd) = 0 ;
+    } 
 }
 
 void ANDI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     bitset<32>temp(imm); 
     for(int i=0; i<32; i++){
         (*rd)[i]=(*rs1)[i] & temp[i];
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
     }
 }
 
@@ -82,12 +101,18 @@ void ORI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     for(int i=0; i<32; i++){
         (*rd)[i]=(*rs1)[i] | temp[i];
     }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void XORI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     bitset<32>temp(imm); 
     for(int i=0; i<32; i++){
         (*rd)[i]=(*rs1)[i] ^ temp[i];
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
     }
 }
 
@@ -99,6 +124,9 @@ void ADD(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     for(int i=0; i<32; i++){
         (*rd)[i]=temp[i];
     }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SUB(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
@@ -109,6 +137,9 @@ void SUB(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     for(int i=0; i<32; i++){
         (*rd)[i]=temp[i];
     }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void ADDI(bitset<32>* rd, const bitset<32>* rs1, int imm){
@@ -117,6 +148,9 @@ void ADDI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     bitset<32> temp(sum); 
     for(int i=0; i<32; i++){
         (*rd)[i]=temp[i];
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
     }
 }
 
@@ -127,6 +161,9 @@ void SRL(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     }
     int shift_amount = temp.to_ulong(); 
     (*rd) = (*rs1) >> shift_amount; 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SRA(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
@@ -137,6 +174,9 @@ void SRA(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     int shift_amount = temp.to_ulong(); 
     signed int rs = (int)(*rs1).to_ulong();
     (*rd) = (rs) >> shift_amount;
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SLL(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
@@ -146,29 +186,37 @@ void SLL(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     }
     int shift_amount = temp.to_ulong(); 
     (*rd) = (*rs1) << shift_amount; 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SLT(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     int first = (int)(*rs1).to_ulong();
     int second = (int)(*rs2).to_ulong();
     (*rd) = (first<second); 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SLTU(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     unsigned int first = (*rs1).to_ulong();
     unsigned int second = (*rs2).to_ulong();
     (*rd) = (first<second); 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SLTI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     int first = (int)(*rs1).to_ulong();
     bitset<12> temp(imm); 
     int t = (int)temp.to_ulong();
-    if(t==2048){
-        t = -2048;
-    }
-    cout << t << endl;
     (*rd) = (first<t); 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SLTIU(bitset<32>* rd, const bitset<32>* rs1, int imm){
@@ -176,18 +224,27 @@ void SLTIU(bitset<32>* rd, const bitset<32>* rs1, int imm){
     bitset<12> temp(imm); 
     unsigned int t = temp.to_ulong();
     (*rd) = (first<t); 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SLLI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     bitset<5> temp(imm); 
     int shift_amount = temp.to_ulong(); 
     (*rd) = (*rs1) << shift_amount; 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SRLI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     bitset<5> temp(imm); 
     int shift_amount = temp.to_ulong(); 
     (*rd) = (*rs1) >> shift_amount; 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
 }
 
 void SRAI(bitset<32>* rd, const bitset<32>* rs1, int imm){
@@ -195,6 +252,205 @@ void SRAI(bitset<32>* rd, const bitset<32>* rs1, int imm){
     int shift_amount = temp.to_ulong(); 
     signed int rs = (int)(*rs1).to_ulong();
     (*rd) = (rs) >> shift_amount;
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
+void JAL(bitset<32>* rd, string label){
+    (*rd) = PC; 
+    int tPC = stoi(memory_locations["PC"]); 
+    PC = stoi(memory_locations[label]);
+    i = (PC-tPC)/4;
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+    return;
+}
+
+void JALR(bitset<32>* rd, const bitset<32>* rs1, int offset){
+    if(rd != &zero){
+        (*rd)=PC;
+    }
+    PC = (int)(*rs1).to_ulong()+offset;
+    int tPC = stoi(memory_locations["PC"]); 
+    i = (PC-tPC)/4;
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+    return;
+}
+
+void BEQ(const bitset<32>* rs1, const bitset<32>* rs2, string label){
+    if((*rs1)==(*rs2)){
+        int tPC = stoi(memory_locations["PC"]); 
+        PC = stoi(memory_locations[label]);
+        i = (PC-tPC)/4;
+    }
+}
+
+void BNE(const bitset<32>* rs1, const bitset<32>* rs2, string label){
+    if((*rs1)!=(*rs2)){
+        int tPC = stoi(memory_locations["PC"]); 
+        PC = stoi(memory_locations[label]);
+        i = (PC-tPC)/4;
+    }
+}
+
+void BLT(const bitset<32>* rs1, const bitset<32>* rs2, string label){
+    if((int)(*rs1).to_ulong()<(int)(*rs2).to_ulong()){
+        int tPC = stoi(memory_locations["PC"]); 
+        PC = stoi(memory_locations[label]);
+        i = (PC-tPC)/4;
+    }
+}
+
+void BGE(const bitset<32>* rs1, const bitset<32>* rs2, string label){
+    if((int)(*rs1).to_ulong()>=(int)(*rs2).to_ulong()){
+        int tPC = stoi(memory_locations["PC"]); 
+        PC = stoi(memory_locations[label]);
+        i = (PC-tPC)/4;
+    }
+}
+
+void BLTU(const bitset<32>* rs1, const bitset<32>* rs2, string label){
+    unsigned long first = (*rs1).to_ulong();
+    unsigned long second = (*rs2).to_ulong();
+    if(first<second){
+        int tPC = stoi(memory_locations["PC"]); 
+        PC = stoi(memory_locations[label]);
+        i = (PC-tPC)/4;
+    }
+}
+
+void BGEU(const bitset<32>* rs1, const bitset<32>* rs2, string label){
+    unsigned long first = (*rs1).to_ulong();
+    unsigned long second = (*rs2).to_ulong();
+    if(first>=second){
+        int tPC = stoi(memory_locations["PC"]); 
+        PC = stoi(memory_locations[label]);
+        i = (PC-tPC)/4;
+    }
+}
+
+void LA(bitset<32>* rd, string variable){
+    (*rd)=stoi(memory_locations[variable]);
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
+void LB(bitset<32>* rd, const bitset<32>* rs1, int offset){
+    int temp = (int)(*rs1).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]);
+    (*rd)=0; 
+    bitset<32> tset(value); 
+    for(int i=0; i<8; i++){
+        (*rd)[i] = tset[i];
+    }
+    if(tset[7]==1){
+        for(int i=8; i<32; i++){
+            (*rd)[i] = 1; 
+        }
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
+void LH(bitset<32>* rd, const bitset<32>* rs1, int offset){
+    int temp = (int)(*rs1).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]);
+    (*rd)=0; 
+    bitset<32> tset(value); 
+    for(int i=0; i<16; i++){
+        (*rd)[i] = tset[i];
+    }
+    if(tset[15]==1){
+        for(int i=16; i<32; i++){
+            (*rd)[i] = 1; 
+        }
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
+void LBU(bitset<32>* rd, const bitset<32>* rs1, int offset){
+    int temp = (int)(*rs1).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]);
+    (*rd)=0; 
+    bitset<32> tset(value); 
+    for(int i=0; i<8; i++){
+        (*rd)[i] = tset[i];
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
+void LHU(bitset<32>* rd, const bitset<32>* rs1, int offset){
+    int temp = (int)(*rs1).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]);
+    (*rd)=0; 
+    bitset<32> tset(value); 
+    for(int i=0; i<16; i++){
+        (*rd)[i] = tset[i];
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
+void LW(bitset<32>* rd, const bitset<32>* rs1, int offset){
+    int temp = (int)(*rs1).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]); 
+    bitset<32> tset(value); 
+    (*rd)=tset; 
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
+void SB(bitset<32>* rs1, const bitset<32>* rs2, int offset){
+    int temp = (int)(*rs2).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]);
+    bitset<32> tset(value); 
+    for(int i=0; i<8; i++){
+        tset[i]=(*rs1)[i];
+    }
+    value = (int)tset.to_ulong();
+    data_values[to_string(temp)]=value;
+}
+
+void SH(bitset<32>* rs1, const bitset<32>* rs2, int offset){
+    int temp = (int)(*rs2).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]);
+    bitset<32> tset(value); 
+    for(int i=0; i<16; i++){
+        tset[i]=(*rs1)[i];
+    }
+    value = (int)tset.to_ulong();
+    data_values[to_string(temp)]=value;
+}
+
+void SW(bitset<32>* rs1, const bitset<32>* rs2, int offset){
+    int temp = (int)(*rs2).to_ulong();
+    temp+=offset; 
+    int value = stoi(data_values[to_string(temp)]);
+    bitset<32> tset(value); 
+    for(int i=0; i<32; i++){
+        tset[i]=(*rs1)[i];
+    }
+    value = (int)tset.to_ulong();
+    data_values[to_string(temp)]=value;
 }
 
 bitset<32>* getRegister(string operand){
@@ -343,6 +599,7 @@ void uploadProgram(){
             inputs.push_back(temp);
         }
         if(inputs.size()==1){
+            inputs[0].pop_back();
             memory_locations[inputs[0]] = to_string(PC+(inc*4)); //keeping the labels' locations. 
         }
         inc++; 
@@ -352,6 +609,219 @@ void uploadProgram(){
 
 void executeInstruction(vector<string> inputs){
     string instruction = inputs[0];
+    if(instruction=="sw" || instruction == "SW"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        SW(rs1, rs2 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="sh" || instruction == "SH"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        SH(rs1, rs2 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="sb" || instruction == "SB"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        SB(rs1, rs2 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="lw" || instruction == "LW"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        LW(rd, rs1 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="lhu" || instruction == "LHU"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        LHU(rd, rs1 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="lbu" || instruction == "LBU"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        LBU(rd, rs1 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="lh" || instruction == "LH"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        LH(rd, rs1 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="lb" || instruction == "LB"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        LB(rd, rs1 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="bgeu" || instruction == "BGEU"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        BGEU(rs1, rs2, inputs[3]);
+        return; 
+    }
+    if(instruction=="bltu" || instruction == "BLTU"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        BLTU(rs1, rs2, inputs[3]);
+        return; 
+    }
+    if(instruction=="bge" || instruction == "BGE"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        BGE(rs1, rs2, inputs[3]);
+        return; 
+    }
+    if(instruction=="blt" || instruction == "BLT"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        BLT(rs1, rs2, inputs[3]);
+        return; 
+    }
+    if(instruction=="bne" || instruction == "BNE"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        BNE(rs1, rs2, inputs[3]);
+        return; 
+    }
+    if(instruction=="beq" || instruction == "BEQ"){
+        inputs[1].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs2 = getRegister(inputs[2]);
+        BEQ(rs1, rs2, inputs[3]);
+        return; 
+    }
+    if(instruction=="la" || instruction == "LA"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        LA(rd, inputs[2]);
+        return; 
+    }
+    if(instruction=="jalr" || instruction == "JALR"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        string str_offset = "";
+        for(int j=0; j<inputs[2].length(); j++){
+            if(inputs[2][j]-'0' >=0 && inputs[2][j]-'0' <10){
+                str_offset += inputs[2][j];
+            }else{
+                break;
+            }
+        }
+        inputs[2].pop_back();
+        inputs[2].erase(0, str_offset.length()+1);
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        JALR(rd, rs1 , stoi(str_offset));
+        return; 
+    }
+    if(instruction=="jal" || instruction == "JAL"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        JAL(rd, inputs[2]);
+        return; 
+    }
     if(instruction=="srai" || instruction == "SRAI"){
         inputs[1].pop_back();
         bitset<32>* rd = getRegister(inputs[1]);
@@ -541,7 +1011,6 @@ void executeInstruction(vector<string> inputs){
 
 void executeProgram(){
     string line = program[0];
-    int i=0;
     while(line != "ECALL" && line != "EBREAK" && line != "FENCE"){ 
         std::stringstream ss(line);
         string temp;
@@ -552,10 +1021,13 @@ void executeProgram(){
         if(inputs.size()==1){ //in case we encounter a label we go to the next line; 
             i++; 
             line = program[i]; 
+            inputs[0].pop_back(); 
             PC = stoi(memory_locations[inputs[0]])+4; 
             continue; 
         }
+        cout << line <<endl;
         executeInstruction(inputs); 
+        cout << t1 << endl;
         i++; 
         line = program[i];
         PC+=4; 
