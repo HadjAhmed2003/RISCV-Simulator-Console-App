@@ -38,6 +38,19 @@ bitset<32> t6(0);
 int PC; 
 int i=0;
 
+void MUL(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
+    int temp1 = (int)((*rs1).to_ulong());
+    int temp2 = (int)((*rs2).to_ulong());
+    int sum = temp1*temp2; 
+    bitset<32> temp(sum); 
+    for(int i=0; i<32; i++){
+        (*rd)[i]=temp[i];
+    }
+    if(rd == &zero){
+        (*rd) = 0 ;
+    }
+}
+
 void LUI(bitset<32>*rd, int imm){
     bitset<32> temp(imm); 
     for(int i=31; i>=12; i--){
@@ -420,37 +433,30 @@ void LW(bitset<32>* rd, const bitset<32>* rs1, int offset){
 void SB(bitset<32>* rs1, const bitset<32>* rs2, int offset){
     int temp = (int)(*rs2).to_ulong();
     temp+=offset; 
-    int value = stoi(data_values[to_string(temp)]);
-    bitset<32> tset(value); 
+    bitset<32> tset(0); 
     for(int i=0; i<8; i++){
         tset[i]=(*rs1)[i];
     }
-    value = (int)tset.to_ulong();
-    data_values[to_string(temp)]=value;
+    int value = (int)tset.to_ulong();
+    data_values[to_string(temp)]=to_string(value);
 }
 
 void SH(bitset<32>* rs1, const bitset<32>* rs2, int offset){
     int temp = (int)(*rs2).to_ulong();
     temp+=offset; 
-    int value = stoi(data_values[to_string(temp)]);
-    bitset<32> tset(value); 
+    bitset<32> tset(0); 
     for(int i=0; i<16; i++){
         tset[i]=(*rs1)[i];
     }
-    value = (int)tset.to_ulong();
-    data_values[to_string(temp)]=value;
+    int value = (int)tset.to_ulong();
+    data_values[to_string(temp)]=to_string(value);
 }
 
 void SW(bitset<32>* rs1, const bitset<32>* rs2, int offset){
     int temp = (int)(*rs2).to_ulong();
     temp+=offset; 
-    int value = stoi(data_values[to_string(temp)]);
-    bitset<32> tset(value); 
-    for(int i=0; i<32; i++){
-        tset[i]=(*rs1)[i];
-    }
-    value = (int)tset.to_ulong();
-    data_values[to_string(temp)]=value;
+    int value = (int)(*rs1).to_ulong();
+    data_values[to_string(temp)]=to_string(value);
 }
 
 bitset<32>* getRegister(string operand){
@@ -582,6 +588,10 @@ void ReadData(){
 
 void uploadProgram(){
     PC = stoi(data_values[memory_locations["PC"]]);
+    bitset<32>tsp(stoi(data_values[memory_locations["sp"]]));
+    for(int i=0; i<32; i++){
+        sp[i]=tsp[i]; 
+    }
     string path; 
     cout << "Enter your program file: "; 
     cin >> path;
@@ -609,6 +619,15 @@ void uploadProgram(){
 
 void executeInstruction(vector<string> inputs){
     string instruction = inputs[0];
+    if(instruction=="mul" || instruction == "MUL"){
+        inputs[1].pop_back();
+        bitset<32>* rd = getRegister(inputs[1]);
+        inputs[2].pop_back();
+        bitset<32>* rs1 = getRegister(inputs[2]);
+        bitset<32>* rs2 = getRegister(inputs[3]);
+        MUL(rd, rs1, rs2);
+        return; 
+    }
     if(instruction=="sw" || instruction == "SW"){
         inputs[1].pop_back();
         bitset<32>* rs1 = getRegister(inputs[1]);
@@ -1025,9 +1044,7 @@ void executeProgram(){
             PC = stoi(memory_locations[inputs[0]])+4; 
             continue; 
         }
-        cout << line <<endl;
         executeInstruction(inputs); 
-        cout << t1 << endl;
         i++; 
         line = program[i];
         PC+=4; 
@@ -1038,6 +1055,6 @@ int main(){
     ReadData(); 
     uploadProgram();
     executeProgram();
-    cout << t0 << endl; 
+    cout << (int)(a0).to_ulong() << endl; 
     return 0;
 }
