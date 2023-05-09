@@ -38,6 +38,94 @@ bitset<32> t6(0);
 int PC; 
 int i=0;
 
+string dec_to_binary(int decimal){
+    string binaryStr = "";  
+    while (decimal > 0) {
+      binaryStr = to_string(decimal % 2) + binaryStr; 
+      decimal = decimal / 2;
+    }
+    return binaryStr;
+}
+
+string dec_to_hex(int decimal){
+    string hexStr = "";  
+    int hexValue = 0;     
+    int hexLen = 0;       
+    while (decimal > 0) {
+        hexValue = decimal % 16;
+        if (hexValue < 10) {
+            hexStr = to_string(hexValue) + hexStr;
+        }
+        else {
+            hexStr = char(hexValue - 10 + 'A') + hexStr;
+        }
+        decimal /= 16;
+        hexLen++;
+    }
+    if (hexLen < 1) {
+        hexStr = "0" + hexStr;
+    }
+    return hexStr;
+}
+
+void print_registers(){
+    vector<int> registers(32); 
+    registers[0] = (int)zero.to_ulong(); 
+    registers[1] = (int)ra.to_ulong(); 
+    registers[2] = (int)sp.to_ulong(); 
+    registers[3] = (int)gp.to_ulong(); 
+    registers[4] = (int)tp.to_ulong();  
+    registers[5] = (int)t0.to_ulong(); 
+    registers[6] = (int)t1.to_ulong(); 
+    registers[7] = (int)t2.to_ulong(); 
+    registers[8] = (int)s0.to_ulong(); 
+    registers[9] = (int)s1.to_ulong(); 
+    registers[10] = (int)a0.to_ulong(); 
+    registers[11] =  (int)a1.to_ulong(); 
+    registers[12] = (int)a2.to_ulong(); 
+    registers[13] = (int)a3.to_ulong(); 
+    registers[14] = (int)a4.to_ulong(); 
+    registers[15] = (int)a5.to_ulong(); 
+    registers[16] = (int)a6.to_ulong(); 
+    registers[17] = (int)a7.to_ulong(); 
+    registers[18] = (int)s2.to_ulong(); 
+    registers[19] = (int)s3.to_ulong(); 
+    registers[20] = (int)s4.to_ulong(); 
+    registers[21] = (int)s5.to_ulong(); 
+    registers[22] = (int)s6.to_ulong(); 
+    registers[23] = (int)s7.to_ulong(); 
+    registers[24] = (int)s8.to_ulong(); 
+    registers[25] = (int)s9.to_ulong();
+    registers[26] = (int)s10.to_ulong(); 
+    registers[27] = (int)s11.to_ulong();  
+    registers[28] = (int)t3.to_ulong(); 
+    registers[29] = (int)t4.to_ulong();
+    registers[30] = (int)t5.to_ulong();
+    registers[31] = (int)t6.to_ulong();
+    cout << "Register\t\t" << "Decimal\t\t" << "Binary\t\t" << "Hex\n"; 
+    for(int i=0; i<32; i++){
+        cout << "x" << i << "\t\t" << registers[i] << "\t\t" <<dec_to_binary(registers[i]) << "\t\t" <<dec_to_hex(registers[i])  << "\n"; 
+    }  
+} 
+
+void print_memory(){
+    cout << "Memory in Decimal:\n";
+    cout << "Address\t\t" << "value\n";
+    for(auto i:data_values){
+        cout << i.first << "\t\t" << i.second << "\n";
+    }
+    cout << "Memory in Binary:\n";
+    cout << "Address\t\t" << "value\n";
+    for(auto i:data_values){
+        cout << dec_to_binary(stoi(i.first)) << "\t\t" << dec_to_binary(stoi(i.second)) << "\n";
+    }
+    cout << "Memory in HEX:\n";
+    cout << "Address\t\t" << "value\n";
+    for(auto i:data_values){
+        cout << dec_to_hex(stoi(i.first)) << "\t\t" << dec_to_hex(stoi(i.second)) <<"\n";
+    }
+}
+
 void MUL(bitset<32>* rd, const bitset<32>* rs1, const bitset<32>* rs2){
     int temp1 = (int)((*rs1).to_ulong());
     int temp2 = (int)((*rs2).to_ulong());
